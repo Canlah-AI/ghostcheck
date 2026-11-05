@@ -336,8 +336,6 @@ key back.
 - `providerClient` is not unit-tested with live API calls. It is covered by a manual smoke test
   checklist in `docs/smoke-tests.md` that verifies key-in-memory behaviour using browser DevTools.
 
-### No-secrets CI check
+### No-secrets check
 
-A pre-commit hook and CI step grep the diff for patterns `sk-`, `AIza`, `ghp_`, `gho_`, `xox`,
-`AKIA`, and PEM headers and fail if any match is found outside a test fixture that only contains
-the pattern as a redacted placeholder (e.g., `"sk-REDACTED"`).
+Secret scanning is enforced by the `secret-scan` Kiro hook (`.kiro/hooks/secret-scan.kiro.hook`), which runs automatically on `agentStop` and on demand. It greps changed files for `sk-`, `AIza`, `ghp_`, `gho_`, `xox`, `AKIA`, and PEM headers, allowing only the literal placeholder `sk-REDACTED` in test fixtures. There is no separate CI pipeline.

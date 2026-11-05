@@ -154,7 +154,7 @@ before they are needed. Complete tasks in order unless otherwise noted.
     - Clicking the AI Séance / demo entry transitions to `"ai-seance"`.
   - _Requirements: 4.1_
 
-- [ ] 14. Run automated accessibility audit in CI
+- [ ] 14. Run automated accessibility audit (local)
   - Install `vitest-axe` (or `@axe-core/react`) at a pinned version.
   - Write `accessibility.test.tsx`:
     - Mount `SiteSeancePage` with a mock `ScoredResult` fixture; assert zero axe violations.
@@ -162,18 +162,11 @@ before they are needed. Complete tasks in order unless otherwise noted.
   - Verify programmatically that `--color-text-primary` and `--color-text-muted` against
     `--color-bg`, and `--color-accent` and `--color-warn` against `--color-bg`, each satisfy
     4.5:1. Encode the ratios as constants and assert `ratio >= 4.5` in the test.
+  - Run via `vitest run` locally — no CI pipeline required; accessibility violations are a
+    blocking local test failure.
   - _Requirements: 2.1, 2.3_
 
-- [ ] 15. Add no-secrets CI check for `apps/web`
-  - Extend the repo-level pre-commit hook (or add a Vitest global setup file) to grep all
-    files under `apps/web/` for patterns `sk-`, `AIza`, `ghp_`, `gho_`, `xox`, `AKIA`, and
-    PEM headers.
-  - Fail the check if any match is found outside a fixture file containing only the pattern
-    as a redacted placeholder (e.g., `"sk-REDACTED"`).
-  - Confirm the check passes on the current codebase.
-  - _Requirements: 2.3_ (cross-ref security steering rule 1)
-
-- [ ] 16. Integration smoke test: full Site Séance render with `canlah.ai` fixture
+- [ ] 15. Integration smoke test: full Site Séance render with `canlah.ai` fixture
   - In `apps/web/src/__tests__/smoke.test.tsx`, mount `App` with a mocked Worker proxy that
     returns pre-recorded HTTP fixtures for `https://canlah.ai`.
   - Assert:
@@ -182,14 +175,15 @@ before they are needed. Complete tasks in order unless otherwise noted.
     - `CheckList` contains at least one item.
     - No third-party trademark strings appear anywhere in the rendered output (P9).
   - Clean up any temporary fixture files after the test run.
+  - Confirm no-secrets compliance is enforced by the `secret-scan` Kiro hook (see
+    `.kiro/hooks/secret-scan.kiro.hook`) — no separate CI step required.
   - _Requirements: 1.1, 3.1, 4.1_
 
-- [ ] 17. Build and deploy verification
-  - Run `npm run build` in `apps/web`; confirm zero TypeScript errors and zero Vite build
-    errors.
+- [ ] 16. Build and deploy verification
+  - Run `npm run build` in `apps/web`; confirm zero TypeScript errors and zero Vite build errors.
   - Run the full Vitest suite (`npm test`); confirm all tests pass.
-  - Verify the built `dist/` directory contains only static assets (no secrets, no private
-    data).
+  - Verify the built `dist/` directory contains only static assets (no secrets, no private data).
   - Confirm `FogLayer` is absent from the built output when the fixture HTML sets
     `prefers-reduced-motion: reduce` (manual check in browser DevTools).
+  - Deploy manually: Worker via `wrangler deploy`, Pages via `wrangler pages deploy`.
   - _Requirements: 2.1, 2.2, 2.3, 4.1_

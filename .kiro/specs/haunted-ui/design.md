@@ -421,10 +421,11 @@ resembles a secret token.
 - `ThemeProvider.test.tsx`: CSS custom properties are present on the wrapper element; no
   third-party trademark strings appear in any rendered child text (P9).
 
-### Accessibility audit (automated, runs in CI)
+### Accessibility audit (automated, local)
 
 - `axe-core` (via `vitest-axe` or `@axe-core/react`) runs against the full mounted
-  `SiteSeancePage` with a mock `ScoredResult`; zero violations expected.
+  `SiteSeancePage` with a mock `ScoredResult`; zero violations expected. Runs via `vitest run`
+  locally — not in a CI pipeline.
 - Contrast ratios are verified programmatically for `--color-text-primary`, `--color-text-muted`,
   `--color-accent`, `--color-warn` against `--color-bg` and `--color-surface`.
 
@@ -434,7 +435,9 @@ resembles a secret token.
 - Assert that `ScoredResult.score` is in [0,100], `GhostCanvas` renders, `CheckList` is
   non-empty, and no third-party trademark appears in the output (P9).
 
-### No-secrets CI check
+### No-secrets check
 
-Shared with the repo-level pre-commit hook: grep for `sk-`, `AIza`, `ghp_`, `gho_`, `xox`,
-`AKIA`, and PEM headers in all committed files under `apps/web/`.
+Secret scanning is enforced by the `secret-scan` Kiro hook (`.kiro/hooks/secret-scan.kiro.hook`),
+which runs on `agentStop` and on demand. It greps changed files for `sk-`, `AIza`, `ghp_`,
+`gho_`, `xox`, `AKIA`, and PEM headers in all files under `apps/web/`. There is no separate
+CI pipeline; the hook is the gate.

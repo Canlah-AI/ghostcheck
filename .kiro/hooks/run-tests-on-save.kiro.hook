@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Run tests on save",
+  "description": "When a TypeScript source file under packages/core/src, apps/worker/src, or apps/web/src is edited, run the unit tests and property-based tests (*.pbt.test.ts) for the affected package using `vitest run`. If any test fails, investigate the failure and fix it — never weaken or delete a test to make it pass.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "packages/core/src/**/*.ts",
+      "apps/worker/src/**/*.ts",
+      "apps/web/src/**/*.ts",
+      "apps/web/src/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A TypeScript source file was just saved. Determine which package it belongs to (packages/core, apps/worker, or apps/web) and run its tests with `vitest run` scoped to that package directory (e.g. `npm run test --workspace=packages/core` or `npx vitest run packages/core`). Include both the regular unit tests (*.test.ts / *.test.tsx) and the property-based tests (*.pbt.test.ts) in the same run.\n\nIf all tests pass, report the count of passing tests and stop.\n\nIf any test fails:\n1. Read the failure output carefully.\n2. Identify whether the failure is caused by a bug in the implementation or a legitimate invariant violation.\n3. Fix the implementation code — do NOT relax assertions, remove test cases, or change property generators to avoid the failure.\n4. Re-run the tests and repeat until all tests pass.\n5. Report what was fixed.\n\nImportant constraints:\n- Never weaken a test to make it pass.\n- Never remove a property-based test (*.pbt.test.ts).\n- If a test exposes a real bug, fix the production code, not the test."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Keep README Checks table in sync",
+  "description": "When a file is created or edited in packages/core/src/checks/, update the Checks table in README.md so it reflects every check module: the check name (human label), its weight, and the official source link from its exported data. Never invent a source link; if a check module does not export a docUrl or the crawler entry has no docUrl, leave the source column as '—'.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "packages/core/src/checks/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A file under packages/core/src/checks/ was just created or edited. Update the '## Checks' table in README.md to match the current set of check modules.\n\nSteps:\n1. List all *.ts files in packages/core/src/checks/ (excluding *.test.ts and *.pbt.test.ts).\n2. For each file, read its exported `weight` constant and its human-readable label (look for a `label` export or derive it from the check ID or file name).\n3. For crawler-based checks (robots.ts), look up each crawler's `docUrl` from packages/core/src/crawlers.ts. Every crawler entry must already have a valid docUrl per the requirements; use it as-is.\n4. For non-crawler checks, use the source URL exported by the check module if one exists; otherwise use '—'. Never fabricate or guess a URL.\n5. Produce a markdown table with columns: Check | Weight | Source.\n6. Find the existing '## Checks' section in README.md (or create it before the '## License' section if absent) and replace only that table — do not touch any other section of README.md.\n\nTable format example:\n| Check | Weight | Source |\n|---|---|---|\n| robots.txt — GPTBot | 10 | https://platform.openai.com/docs/gptbot |\n| llms.txt | 15 | https://llmstxt.org |\n\nConstraints:\n- Do not invent source links. If a docUrl is absent, write '—'.\n- Do not change the weight values — read them from the exported constants.\n- Do not modify any section of README.md other than the Checks table."
+  }
+}

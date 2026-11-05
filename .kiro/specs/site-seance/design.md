@@ -301,6 +301,10 @@ A single Vitest test that assembles a `SiteInputs` object from fixture files und
 
 The Worker is tested with Vitest using `miniflare` or the `@cloudflare/workers-types` compatible test harness. Tests confirm SSRF rejection, timeout, redirect limit, and correct passthrough of a public URL response.
 
+### No-secrets check
+
+Secret scanning is enforced by the `secret-scan` Kiro hook (`.kiro/hooks/secret-scan.kiro.hook`), which runs on `agentStop` and on demand. There is no separate CI pipeline; the hook is the gate.
+
 ### What is NOT tested here
 
 AI Séance (covered by its own spec), the React component tree (covered by the haunted-ui spec), and real network calls (the worker integration test uses mocked fetch).
